@@ -3,6 +3,10 @@ from .models import Category1,Category2,Record,RecordLikes,RecordComments
 from posts.serializers import UserAbstractSerializer,ProfileSerializer
 from profiles.models import Profile
 
+class ContentSearchSerializer(serializers.ModelSerializer):
+	class Meta:
+		model=Record
+		fields=['id','title']
 
 
 class Category1AbstractSerializer(serializers.ModelSerializer):
@@ -40,7 +44,7 @@ class RecordDetailSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Record
 		exclude=[]
-		
+
 class RecordCommentsSerializer(serializers.ModelSerializer):
 	profile=ProfileSerializer(required=False)
 	record=RecordDetailSerializer(required=False)
@@ -64,7 +68,7 @@ class RecordCommentsSerializer(serializers.ModelSerializer):
 			comment.save()
 			return comment
 		else:
-			raise serializers.ValidationError({'comment_field_is_mandatory':'Comment field is mandatory'})	
+			raise serializers.ValidationError({'comment_field_is_mandatory':'Comment field is mandatory'})
 
 class RecordLikesSerializer(serializers.ModelSerializer):
 	profile=ProfileSerializer(required=False)

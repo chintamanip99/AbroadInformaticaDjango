@@ -14,7 +14,7 @@ class Profile(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True,blank=False)
 	phone_number=models.CharField(max_length=20,null=True,blank=True)
 	age=models.PositiveIntegerField(default=21, blank=False,validators=[MinValueValidator(18), MaxValueValidator(100)],null=False)
-	image=models.FileField(null=True,blank=True,upload_to=settings.MEDIA_ROOT+"/Profiles",validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png'])])
+	image=models.FileField(null=True,blank=True,validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png'])])
 	is_phone_number_verified=models.BooleanField(default=False,null=True,blank=False)
 	is_email_verified=models.BooleanField(default=False,null=True,blank=False)
 	is_regular=models.BooleanField(default=False,null=True,blank=False)

@@ -4,11 +4,11 @@ from profiles.models import Profile
 from rest_framework.settings import api_settings
 from django.contrib.auth.models import User
 
-
 class PostSearchSerializer(serializers.ModelSerializer):
 	class Meta:
 		model=Posts
-		fields=['title']
+		fields=['id','title']
+
 
 class UserAbstractSerializer(serializers.ModelSerializer):
 
@@ -177,4 +177,4 @@ class CommentsSerializer(serializers.ModelSerializer):
 			comment.save()
 			return comment
 		else:
-			raise serializers.ValidationError({'comment_field_is_mandatory':'Comment field is mandatory'})	
+			raise serializers.ValidationError({'comment_field_is_mandatory':'Comment field is mandatory'})

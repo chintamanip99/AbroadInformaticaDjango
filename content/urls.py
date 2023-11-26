@@ -1,6 +1,6 @@
 from django.urls import path,include
 # from .views import m
-from .views import show_full_content,show_details_of_content,RecordLike,RecordComment,twilio,Content,get_server_ip_address
+from .views import show_full_content,show_details_of_content,RecordLike,RecordComment,twilio,Content,get_server_ip_address,ContentSearch
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -13,6 +13,7 @@ urlpatterns = [
      path('comment/<int:id>',RecordComment.as_view(),name='rcomment'),
      path('twilio/',twilio,name='twilio'),
      path('content/',Content.as_view(),name='content'),
+     path('search/',ContentSearch.as_view(),name='content_search'),
      path('get_server_ip_address/',get_server_ip_address,name='get_server_ip_address'),
 ]
 

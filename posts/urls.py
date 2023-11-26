@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .views import Channel,Post,Like,Comment,StandardResultsSetPagination
+from .views import Channel,Post,Like,Comment,StandardResultsSetPagination,PostSearch
 from rest_framework.decorators import api_view,renderer_classes,permission_classes
 from BhagwaPataka.urls import IsConfirmedEmail
 from django.conf.urls.static import static
@@ -19,5 +19,6 @@ urlpatterns = [
     path('post/<int:id>',Post.as_view(),name='post'),
     path('like/<int:id>',Like.as_view(),name='like'),
     path('comment/<int:id>',Comment.as_view(),name='comment'),
+    path('search/',PostSearch.as_view(),name='post_search'),
 ]
 

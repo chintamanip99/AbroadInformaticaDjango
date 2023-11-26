@@ -18,6 +18,7 @@ from .serializers import (Category1AbstractSerializer,
 	Category1DetailSerializer,
 	Category2DetailSerializer,
 	RecordCommentsSerializer,
+	ContentSearchSerializer,
 	RecordDetailSerializer)
 
 from rest_framework.exceptions import ParseError
@@ -25,26 +26,36 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from BhagwaPataka.urls import IsConfirmedEmail
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from twilio.rest import Client 
+from twilio.rest import Client
 import time
 from profiles.models import Profile
 from posts.models import Channels
 from posts.serializers import ChannelAbstractSerializer
+from posts.views import PaginationForSearch
+
+class ContentSearch(generics.ListAPIView):
+	permission_classes = []
+	parser_class = (FileUploadParser,MultiPartParser,FormParser,JSONParser)
+	pagination_class=PaginationForSearch
+	queryset=Record.objects.all()
+	serializer_class=ContentSearchSerializer
+	filter_backends = [filters.SearchFilter,filters.OrderingFilter]
+	search_fields  = ['title','description','image_link','audio_link','video_link','text_content_link','category1__title','category2__title','category2__category1__title']
 
 
 @api_view(['GET'])
 @permission_classes([])
 def twilio(request):
-	account_sid = 'AC4dc42d945d580e0b3f13b7f33141a0b0' 
-	auth_token = '6002dd65e7b1327abe869654ae1539c8' 
-	client = Client(account_sid, auth_token) 
+	account_sid = 'AC4dc42d945d580e0b3f13b7f33141a0b0'
+	auth_token = '6002dd65e7b1327abe869654ae1539c8'
+	client = Client(account_sid, auth_token)
 	list1=['+919834632388','+919284356619']
 	for j in range(4):
 		for i in list1:
-			message = client.messages.create( 
+			message = client.messages.create(
 				from_='whatsapp:+14155238886',
 				body='pooja bindok',
-				to='whatsapp:'+i 
+				to='whatsapp:'+i
 				)
 			time.sleep(10)
 	return Response({"sent":"watsaopmessagw sent"})
@@ -235,7 +246,7 @@ class RecordComment(APIView):
 				comment.delete()
 				return Response({'comment_deleted':'Comment deleted successfully'})
 			else:
-				return Response({'cant_delete_comment':'You cant delete this comment as you have not created it'}) 
+				return Response({'cant_delete_comment':'You cant delete this comment as you have not created it'})
 		except RecordComments.DoesNotExist:
 			return Response({'comment_doesnt_exist':'Comment Doesnt Exist'})
 

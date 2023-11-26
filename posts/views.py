@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view,renderer_classes,permission_classes
 from rest_framework.permissions import IsAuthenticated
 # Create your views here.
-
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
@@ -40,6 +39,15 @@ class StandardResultsSetPagination(PageNumberPagination,APIView):
     	self.page_size=n
     	PageNumberPagination.page_size = n
     	return Response({'successfully_changed_page_size':'Successfully Changed Page Size'+str(PageNumberPagination.page_size)})
+
+class PostSearch(generics.ListAPIView):
+	permission_classes = [(IsConfirmedEmail)]
+	parser_class = (FileUploadParser,MultiPartParser,FormParser,JSONParser)
+	pagination_class=PaginationForSearch
+	queryset=Posts.objects.all()
+	serializer_class=PostSearchSerializer
+	filter_backends = [filters.SearchFilter,filters.OrderingFilter]
+	search_fields  = ['title','description','channel__user__username','channel__user__first_name','channel__user__last_name','main_content_text_link','main_content_image_link','main_content_audio_link','main_content_gif_link']
 
 class Channel(generics.ListAPIView):
 	permission_classes = [(IsConfirmedEmail)]
@@ -96,15 +104,6 @@ class Channel(generics.ListAPIView):
 		except Channels.DoesNotExist:
 			return Response({'channel_doesnt_exist':'Channel Does Not Exist'})
 
-class PostSearch(generics.ListAPIView):
-	permission_classes = [(IsConfirmedEmail)]
-	parser_class = (FileUploadParser,MultiPartParser,FormParser,JSONParser)
-	pagination_class=PaginationForSearch
-	queryset=Posts.objects.all()
-	serializer_class=PostSearchSerializer
-	filter_backends = [filters.SearchFilter,filters.OrderingFilter]
-	search_fields  = ['title']
-
 class Comment(APIView):
 	permission_classes = [(IsConfirmedEmail)]
 	parser_class = (FileUploadParser,MultiPartParser,FormParser,JSONParser)
@@ -149,7 +148,7 @@ class Comment(APIView):
 				comment.delete()
 				return Response({'comment_deleted':'Comment deleted successfully'})
 			else:
-				return Response({'cant_delete_comment':'You cant delete this comment as you have not created it'}) 
+				return Response({'cant_delete_comment':'You cant delete this comment as you have not created it'})
 		except Comments.DoesNotExist:
 			return Response({'comment_doesnt_exist':'Comment Doesnt Exist'})
 
@@ -232,4 +231,3 @@ class Like(APIView):
 				return Response({'like':'doesnt_exist'})
 		except Posts.DoesNotExist:
 			return Response({'post_doesnt_exist':'Post Doesnt Exist'})
-			

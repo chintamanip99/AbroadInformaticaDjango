@@ -53,17 +53,19 @@ def register_user(request):
 
     if request.method=='GET':
         profile=Profile.objects.get(user=request.user)
+        data={}
+
         return Response({
             'first_name':request.user.first_name,
             'last_name':request.user.last_name,
             'email':request.user.email,
             'phone_number':profile.phone_number,
-            'image':profile.image.url,
+            'image':profile.image.url if profile.image else None,
             'is_phone_number_verified':profile.is_phone_number_verified,
             'is_email_verified':profile.is_email_verified,
             'date_joined':request.user.date_joined,
             })
-    
+
     if request.method=='PUT':
         serializer=ProfileSerializer(data=request.data)
         data={}
@@ -75,7 +77,7 @@ def register_user(request):
                 'last_name':request.user.last_name,
                 'email':request.user.email,
                 'phone_number':profile.phone_number,
-                'image':profile.image.url,
+                'image':profile.image.url if profile.image else None,
                 'is_phone_number_verified':profile.is_phone_number_verified,
                 'is_email_verified':profile.is_email_verified,
                 'date_joined':request.user.date_joined,
@@ -106,8 +108,8 @@ def verify_otp(request):
                             return Response({"email_verified":"Email Verified Successfully!!"})
                         except Profile.DoesNotExist:
                             return Response({"profile_doesnt_exist":"Profile Doesnt Exist"})
-                        else:
-                            return Response({"worong_otp":"OTP Entered is Wrong,Resend please click on Resend the OTP"})
+                    else:
+                        return Response({"worong_otp":"OTP Entered is Wrong,Resend please click on Resend the OTP"})
                 else:
                     return Response({"otp_expired":"OTP has expired , Click on Resend OTP"})
             except OTPCache.DoesNotExist:
@@ -125,7 +127,7 @@ def verify_otp(request):
             if(request.user.email):
                 if(not profile.is_email_verified):
                     try:
-                        if(not send_mail('OTP Notofication from BhagwaPataka',"OTP :"+str(otp_cache.otp),'cmp151999@gmail.com',[profile.user.email],fail_silently=True)>0):
+                        if(not send_mail('OTP Notofication from Abroad-Informatica',"OTP :"+str(otp_cache.otp),'cmp151999@gmail.com',[profile.user.email],fail_silently=True)>0):
                             return Response({'otp_failed':'OTP Sending Failed (Zero OTPs send)'})
                         else:
                             return Response({'otp_sent_successfully':'OTP sent successfully'})
@@ -146,7 +148,7 @@ def verify_otp(request):
             if(profile.user.email):
                 if(not profile.is_email_verified):
                     try:
-                        if(not send_mail('OTP Notofication from BhagwaPataka',"OTP :"+str(otp_cache.otp),'cmp151999@gmail.com',[profile.user.email],fail_silently=True)>0):
+                        if(not send_mail('OTP Notofication from Abroad-Informatica',"OTP :"+str(otp_cache.otp),'cmp151999@gmail.com',[profile.user.email],fail_silently=True)>0):
                             return Response({'otp_failed':'OTP Sending Failed (Zero OTPs send)'})
                         else:
                             return Response({'otp_sent':'OTP Sent Successfully'})
